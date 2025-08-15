@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">OAuth2 Security Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        .endpoint-card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">OAuth2 Security Example</h1>
+                <p class="text-center text-muted">Demonstração completa de OAuth2 com Spring Boot 3.x</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card endpoint-card">
+                    <div class="card-header">
+                        <h5>🔓 Endpoints Públicos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Estes endpoints não requerem autenticação:</p>
+                        <ul>
+                            <li><a href="/api/public/info" target="_blank">GET /api/public/info</a></li>
+                            <li><a href="/h2-console" target="_blank">H2 Database Console</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card endpoint-card">
+                    <div class="card-header">
+                        <h5>🔐 Endpoints Protegidos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Estes endpoints requerem token JWT válido:</p>
+                        <ul>
+                            <li><strong>Scope 'read':</strong>
+                                <ul>
+                                    <li><a href="/api/user/profile" target="_blank">GET /api/user/profile</a></li>
+                                    <li><a href="/api/user/data" target="_blank">GET /api/user/data</a></li>
+                                </ul>
+                            </li>
+                            <li><strong>Scope 'write' (Admin):</strong>
+                                <ul>
+                                    <li><a href="/api/admin/users" target="_blank">GET /api/admin/users</a></li>
+                                    <li><a href="/api/admin/system" target="_blank">GET /api/admin/system</a></li>
+                                </ul>
+                            </li>
+                            <li><strong>Qualquer token válido:</strong>
+                                <ul>
+                                    <li><a href="/api/protected/info" target="_blank">GET /api/protected/info</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card endpoint-card">
+                    <div class="card-header">
+                        <h5>🎫 Obter Token OAuth2</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>1. Client Credentials (Mais simples)</h6>
+                        <p><a href="/oauth2/client-credentials-example" target="_blank" class="btn btn-primary btn-sm">Obter Token Automaticamente</a></p>
+                        
+                        <h6>2. Authorization Code Flow</h6>
+                        <p><a href="/oauth2/authorization-url" target="_blank" class="btn btn-secondary btn-sm">Obter URL de Autorização</a></p>
+                        
+                        <h6>3. Manual Token Request</h6>
+                        <div class="code-block">
+                            <strong>POST /oauth2/token</strong><br>
+                            Content-Type: application/x-www-form-urlencoded<br>
+                            Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=<br><br>
+                            grant_type=client_credentials&scope=read write
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card endpoint-card">
+                    <div class="card-header">
+                        <h5>👤 Credenciais de Teste</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Usuários:</h6>
+                        <ul>
+                            <li><strong>user</strong> / password (ROLE_USER)</li>
+                            <li><strong>admin</strong> / admin (ROLE_ADMIN)</li>
+                        </ul>
+                        
+                        <h6>Clientes OAuth2:</h6>
+                        <ul>
+                            <li><strong>client-app</strong> / secret</li>
+                            <li><strong>public-client</strong> (sem secret)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>🚀 Como Testar</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li><strong>Teste endpoints públicos:</strong> Clique nos links dos endpoints públicos acima</li>
+                            <li><strong>Obtenha um token:</strong> Use o botão "Obter Token Automaticamente" ou faça uma requisição manual</li>
+                            <li><strong>Teste endpoints protegidos:</strong> Use o token obtido no header Authorization: Bearer {token}</li>
+                            <li><strong>Teste diferentes scopes:</strong> Compare o acesso com tokens de diferentes scopes</li>
+                        </ol>
+                        
+                        <h6>Exemplo com cURL:</h6>
+                        <div class="code-block">
+                            # 1. Obter token<br>
+                            curl -X POST http://localhost:8080/oauth2/token \<br>
+                            &nbsp;&nbsp;-H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \<br>
+                            &nbsp;&nbsp;-H "Content-Type: application/x-www-form-urlencoded" \<br>
+                            &nbsp;&nbsp;-d "grant_type=client_credentials&scope=read write"<br><br>
+                            
+                            # 2. Usar token para acessar API<br>
+                            curl -X GET http://localhost:8080/api/user/profile \<br>
+                            &nbsp;&nbsp;-H "Authorization: Bearer {seu_token_aqui}"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <p class="text-muted">
+                    <small>
+                        Projeto Spring Boot 3.x com OAuth2 Authorization Server, Resource Server e Client<br>
+                        Banco de dados: H2 (em memória) | Tokens: JWT | Refresh Token: Habilitado
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
