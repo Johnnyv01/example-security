@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste OAuth2 - Spring Security</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .code {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Teste OAuth2 Security Example</h1>
+        
+        <div class="info">
+            <h3>✅ Aplicação funcionando na porta 8081!</h3>
+            <p>Esta página confirma que o servidor Spring Boot está rodando corretamente.</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔑 Fluxo de Autorização</h3>
+            <p>Teste o fluxo completo de autorização OAuth2:</p>
+            <a href="/oauth2/authorize?response_type=code&client_id=client-app&redirect_uri=http://localhost:8081/authorized&scope=read openid profile" class="btn">
+                Iniciar Autorização OAuth2
+            </a>
+        </div>
+
+        <div class="test-section">
+            <h3>🗄️ Console H2</h3>
+            <p>Acesse o banco de dados H2 para ver os dados:</p>
+            <a href="/h2-console" class="btn" target="_blank">Abrir H2 Console</a>
+            <div class="code">
+                JDBC URL: jdbc:h2:mem:oauth2db<br>
+                Username: sa<br>
+                Password: password
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Endpoints Disponíveis</h3>
+            <ul>
+                <li><strong>Authorization:</strong> /oauth2/authorize</li>
+                <li><strong>Token:</strong> /oauth2/token</li>
+                <li><strong>JWK Set:</strong> /oauth2/jwks</li>
+                <li><strong>OpenID Configuration:</strong> /.well-known/openid_configuration</li>
+                <li><strong>API Pública:</strong> /api/public</li>
+                <li><strong>API Protegida:</strong> /api/protected</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 Credenciais de Teste</h3>
+            <div class="code">
+                <strong>Usuários:</strong><br>
+                - user / password (ROLE_USER)<br>
+                - admin / admin (ROLE_USER, ROLE_ADMIN)<br><br>
+                <strong>Clientes OAuth2:</strong><br>
+                - client-app / secret (confidencial)<br>
+                - public-client (público)
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Teste de API</h3>
+            <p>Teste os endpoints da API:</p>
+            <a href="/api/public" class="btn" target="_blank">API Pública</a>
+            <a href="/api/protected" class="btn" target="_blank">API Protegida</a>
+        </div>
+    </div>
+</body>
+</html>

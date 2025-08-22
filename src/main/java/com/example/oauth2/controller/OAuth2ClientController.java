@@ -16,7 +16,7 @@ import java.util.Map;
 public class OAuth2ClientController {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String authServerUrl = "http://localhost:8080";
+    private final String authServerUrl = "http://localhost:8081";
 
     @PostMapping("/token")
     public ResponseEntity<Map<String, Object>> getToken(
@@ -161,7 +161,7 @@ public class OAuth2ClientController {
     @GetMapping("/authorization-url")
     public ResponseEntity<Map<String, Object>> getAuthorizationUrl(
             @RequestParam(defaultValue = "client-app") String client_id,
-            @RequestParam(defaultValue = "http://localhost:8080/authorized") String redirect_uri,
+            @RequestParam(defaultValue = "http://localhost:8081/authorized") String redirect_uri,
             @RequestParam(defaultValue = "read write") String scope,
             @RequestParam(defaultValue = "code") String response_type) {
         

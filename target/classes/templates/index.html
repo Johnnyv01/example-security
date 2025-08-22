@@ -132,13 +132,13 @@
                         <h6>Exemplo com cURL:</h6>
                         <div class="code-block">
                             # 1. Obter token<br>
-                            curl -X POST http://localhost:8080/oauth2/token \<br>
+                            curl -X POST http://localhost:8081/oauth2/token \<br>
                             &nbsp;&nbsp;-H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \<br>
                             &nbsp;&nbsp;-H "Content-Type: application/x-www-form-urlencoded" \<br>
                             &nbsp;&nbsp;-d "grant_type=client_credentials&scope=read write"<br><br>
                             
                             # 2. Usar token para acessar API<br>
-                            curl -X GET http://localhost:8080/api/user/profile \<br>
+                            curl -X GET http://localhost:8081/api/user/profile \<br>
                             &nbsp;&nbsp;-H "Authorization: Bearer {seu_token_aqui}"
                         </div>
                     </div>

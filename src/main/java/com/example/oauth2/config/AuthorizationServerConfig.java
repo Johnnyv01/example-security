@@ -72,7 +72,7 @@ public class AuthorizationServerConfig {
             throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/", "/h2-console/**", "/api/public/**", "/@vite/**", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
@@ -84,13 +84,13 @@ public class AuthorizationServerConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
+        UserDetails userDetails = User.builder()
                 .username("user")
                 .password("password")
                 .roles("USER")
                 .build();
         
-        UserDetails adminDetails = User.withDefaultPasswordEncoder()
+        UserDetails adminDetails = User.builder()
                 .username("admin")
                 .password("admin")
                 .roles("USER", "ADMIN")
@@ -101,17 +101,17 @@ public class AuthorizationServerConfig {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient oidcClient = RegisteredClient.withId("client-app-id")
                 .clientId("client-app")
-                .clientSecret("{noop}secret")
+                .clientSecret("secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://localhost:8080/login/oauth2/code/client-app")
-                .redirectUri("http://localhost:8080/authorized")
-                .postLogoutRedirectUri("http://localhost:8080/")
+                .redirectUri("http://localhost:8081/login/oauth2/code/client-app")
+                .redirectUri("http://localhost:8081/authorized")
+                .postLogoutRedirectUri("http://localhost:8081/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .scope("read")
@@ -124,12 +124,12 @@ public class AuthorizationServerConfig {
                         .build())
                 .build();
 
-        RegisteredClient publicClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient publicClient = RegisteredClient.withId("public-client-id")
                 .clientId("public-client")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://localhost:8080/login/oauth2/code/public-client")
+                .redirectUri("http://localhost:8081/login/oauth2/code/public-client")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .scope("read")
@@ -178,12 +178,12 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("http://localhost:8080")
+                .issuer("http://localhost:8081")
                 .build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance();
     }
 }

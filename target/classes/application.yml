@@ -44,10 +44,10 @@ spring:
                 - "refresh_token"
                 - "client_credentials"
               redirect-uris:
-                - "http://localhost:8080/login/oauth2/code/client-app"
-                - "http://localhost:8080/authorized"
+                - "http://localhost:8081/login/oauth2/code/client-app"
+                - "http://localhost:8081/authorized"
               post-logout-redirect-uris:
-                - "http://localhost:8080/"
+                - "http://localhost:8081/"
               scopes:
                 - "openid"
                 - "profile"
@@ -63,7 +63,7 @@ spring:
                 - "authorization_code"
                 - "refresh_token"
               redirect-uris:
-                - "http://localhost:8080/login/oauth2/code/public-client"
+                - "http://localhost:8081/login/oauth2/code/public-client"
               scopes:
                 - "openid"
                 - "profile"

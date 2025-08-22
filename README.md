@@ -31,8 +31,9 @@ Projeto completo demonstrando implementação de OAuth2 com Spring Boot 3.x, inc
    ```
 
 3. **Acesse a aplicação**:
-   - Interface principal: http://localhost:8080
-   - H2 Console: http://localhost:8080/h2-console
+   - Interface principal: http://localhost:8081
+   - Página de teste: http://localhost:8081/test.html
+   - H2 Console: http://localhost:8081/h2-console
 
 ## 👤 Credenciais de Teste
 
@@ -75,13 +76,13 @@ Projeto completo demonstrando implementação de OAuth2 com Spring Boot 3.x, inc
 
 ```bash
 # Obter token
-curl -X POST http://localhost:8080/oauth2/token \
+curl -X POST http://localhost:8081/oauth2/token \
   -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=client_credentials&scope=read write"
 
 # Usar token (substitua {TOKEN} pelo token obtido)
-curl -X GET http://localhost:8080/api/user/profile \
+curl -X GET http://localhost:8081/api/user/profile \
   -H "Authorization: Bearer {TOKEN}"
 ```
 
@@ -89,7 +90,7 @@ curl -X GET http://localhost:8080/api/user/profile \
 
 1. **Obter URL de autorização**:
    ```
-   GET http://localhost:8080/oauth2/authorization-url
+   GET http://localhost:8081/oauth2/authorization-url
    ```
 
 2. **Acessar URL no navegador** e fazer login
@@ -98,16 +99,16 @@ curl -X GET http://localhost:8080/api/user/profile \
 
 4. **Trocar código por token**:
    ```bash
-   curl -X POST http://localhost:8080/oauth2/token \
+   curl -X POST http://localhost:8081/oauth2/token \
      -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
      -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "grant_type=authorization_code&code={CODE}&redirect_uri=http://localhost:8080/authorized"
+     -d "grant_type=authorization_code&code={CODE}&redirect_uri=http://localhost:8081/authorized"
    ```
 
 ### 3. Refresh Token
 
 ```bash
-curl -X POST http://localhost:8080/oauth2/token \
+curl -X POST http://localhost:8081/oauth2/token \
   -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=refresh_token&refresh_token={REFRESH_TOKEN}"
