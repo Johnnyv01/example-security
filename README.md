@@ -70,30 +70,98 @@ Projeto completo demonstrando implementação de OAuth2 com Spring Boot 3.x, inc
 - `GET /oauth2/authorization-url` - URL de autorização
 - `POST /oauth2/test-api` - Testar API com token
 
-## 🎯 Como Testar
+## 🎯 Como Acessar Endpoints Privados
 
-### 1. Teste Rápido (Client Credentials)
+### ❌ Por que o navegador não funciona?
 
-```bash
-# Obter token
-curl -X POST http://localhost:8081/oauth2/token \
-  -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=client_credentials&scope=read write"
+Os endpoints privados (como `/api/user/profile`) **NÃO PODEM** ser acessados diretamente pelo navegador porque:
+- Requerem um **token JWT válido** no header `Authorization: Bearer {token}`
+- O navegador não envia automaticamente este header
+- Sem o token, você recebe erro 401 (Unauthorized) ou 404 (Not Found)
 
-# Usar token (substitua {TOKEN} pelo token obtido)
-curl -X GET http://localhost:8081/api/user/profile \
-  -H "Authorization: Bearer {TOKEN}"
-```
+### ✅ Processo Correto para Acessar Rotas Privadas
 
-### 2. Authorization Code Flow
+#### **Método 1: Client Credentials (Mais Simples)**
+
+1. **Obter token automaticamente**:
+   ```
+   GET http://localhost:8081/oauth2/client-credentials-example
+   ```
+   Ou manualmente:
+   ```bash
+   curl -X POST http://localhost:8081/oauth2/token \
+     -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=client_credentials&scope=read write"
+   ```
+
+2. **Usar o token para acessar API**:
+   ```bash
+   curl -X GET http://localhost:8081/api/user/profile \
+     -H "Authorization: Bearer {SEU_TOKEN_AQUI}"
+   ```
+
+#### **Método 2: Authorization Code Flow (Completo)**
 
 1. **Obter URL de autorização**:
    ```
    GET http://localhost:8081/oauth2/authorization-url
    ```
 
-2. **Acessar URL no navegador** e fazer login
+2. **Acessar URL no navegador** e fazer login com:
+   - **user** / password (ROLE_USER)
+   - **admin** / admin (ROLE_ADMIN)
+
+3. **Após autorizar**, você será redirecionado para:
+   ```
+   http://localhost:8081/authorized?code=SEU_CODIGO_AQUI
+   ```
+
+4. **Trocar código por token**:
+   ```bash
+   curl -X POST http://localhost:8081/oauth2/token \
+     -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=authorization_code&code=SEU_CODIGO&redirect_uri=http://localhost:8081/authorized"
+   ```
+
+5. **Usar token para acessar APIs**:
+   ```bash
+   curl -X GET http://localhost:8081/api/user/profile \
+     -H "Authorization: Bearer {TOKEN_OBTIDO}"
+   ```
+
+#### **Método 3: Usando a Interface Web**
+
+1. Acesse: http://localhost:8081
+2. Clique em "Obter Token Automaticamente" 
+3. Copie o `access_token` da resposta
+4. Use ferramentas como Postman, Insomnia ou curl:
+   ```
+   GET http://localhost:8081/api/user/profile
+   Authorization: Bearer {SEU_TOKEN}
+   ```
+
+### 🔧 Testando com Ferramentas
+
+#### **Postman/Insomnia:**
+1. Método: GET
+2. URL: `http://localhost:8081/api/user/profile`
+3. Headers: `Authorization: Bearer {seu_token_aqui}`
+
+#### **Navegador (com extensão):**
+- Use extensões como "ModHeader" para adicionar o header Authorization
+
+#### **JavaScript (Frontend):**
+```javascript
+fetch('http://localhost:8081/api/user/profile', {
+  headers: {
+    'Authorization': 'Bearer ' + token
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
 
 3. **Autorizar cliente** e obter código
 
@@ -184,15 +252,53 @@ src/main/resources/
 
 ## 🐛 Troubleshooting
 
+### ❌ Erro "Whitelabel Error Page" ao acessar endpoints privados
+
+**Problema:** Ao tentar acessar `/api/user/profile` diretamente no navegador, aparece:
+```
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+There was an unexpected error (type=Not Found, status=404).
+```
+
+**Causa:** O endpoint está protegido e requer autenticação JWT. Sem o token, o Spring Security bloqueia o acesso.
+
+**Solução:** 
+1. **NUNCA** acesse endpoints privados diretamente no navegador
+2. Primeiro obtenha um token OAuth2
+3. Use o token no header `Authorization: Bearer {token}`
+4. Use ferramentas como Postman, curl ou código JavaScript
+
+### 🔑 Você tem o código de autorização? Use-o!
+
+Se você já tem um código como: `http://localhost:8081/authorized?code=fZJ3wr1y9T-UsFsMEDyllUosSONVC6Dvu2bx8QNy7YtfPMe1OhQbdUMzU03Vvgf7cNYkBoqo3SkWNohBzC5dOXDDYWEzCAqpRRT0dnPeUdWinr3gxqPiY6VSMaysTw1G`
+
+**Troque o código por um token:**
+```bash
+curl -X POST http://localhost:8081/oauth2/token \
+  -H "Authorization: Basic Y2xpZW50LWFwcDpzZWNyZXQ=" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=authorization_code&code=fZJ3wr1y9T-UsFsMEDyllUosSONVC6Dvu2bx8QNy7YtfPMe1OhQbdUMzU03Vvgf7cNYkBoqo3SkWNohBzC5dOXDDYWEzCAqpRRT0dnPeUdWinr3gxqPiY6VSMaysTw1G&redirect_uri=http://localhost:8081/authorized"
+```
+
+**Depois use o token obtido:**
+```bash
+curl -X GET http://localhost:8081/api/user/profile \
+  -H "Authorization: Bearer {TOKEN_OBTIDO_ACIMA}"
+```
+
 ### Token Inválido
-- Verifique se o token não expirou
+- Verifique se o token não expirou (válido por 1 hora)
 - Confirme se está usando o header correto: `Authorization: Bearer {token}`
 - Verifique se o scope do token permite acesso ao endpoint
+- Tokens com scope 'read': podem acessar `/api/user/*`
+- Tokens com scope 'write': podem acessar `/api/admin/*`
 
 ### Erro de Autorização
-- Confirme as credenciais do cliente
+- Confirme as credenciais do cliente (client-app:secret)
 - Verifique se o redirect_uri está correto
 - Confirme se o grant_type é suportado pelo cliente
+- Use `Basic Y2xpZW50LWFwcDpzZWNyZXQ=` (client-app:secret em Base64)
 
 ### Problemas de CORS
 - Para desenvolvimento, CORS está desabilitado
