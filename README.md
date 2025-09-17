@@ -72,7 +72,7 @@ Projeto completo demonstrando implementação de OAuth2 com Spring Boot 3.x, inc
 
 ## 🎯 Como Acessar Endpoints Privados
 
-### ❌ Por que o navegador não funciona?
+### ❌ Por que não irá funcionar?
 
 Os endpoints privados (como `/api/user/profile`) **NÃO PODEM** ser acessados diretamente pelo navegador porque:
 - Requerem um **token JWT válido** no header `Authorization: Bearer {token}`

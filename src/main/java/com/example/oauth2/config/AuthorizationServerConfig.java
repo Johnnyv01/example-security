@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -71,6 +72,7 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
         http
+                .securityMatcher(request -> !request.getRequestURI().startsWith("/api/"))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/", "/h2-console/**", "/api/public/**", "/@vite/**", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
@@ -78,7 +80,7 @@ public class AuthorizationServerConfig {
                 .formLogin(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions().disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
-
+    
         return http.build();
     }
 

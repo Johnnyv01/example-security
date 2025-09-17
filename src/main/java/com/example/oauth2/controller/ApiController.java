@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -26,8 +27,9 @@ public class ApiController {
     }
 
     @GetMapping("/user/profile")
-    @PreAuthorize("hasAuthority('SCOPE_read')")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<Map<String, Object>> getUserProfile(Authentication authentication) {
+        System.out.println("profile Entrou aqui!!!!!!");
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Perfil do usuário - requer scope 'read'");
         response.put("timestamp", LocalDateTime.now());
@@ -43,7 +45,7 @@ public class ApiController {
     }
 
     @GetMapping("/user/data")
-    @PreAuthorize("hasAuthority('SCOPE_read')")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<Map<String, Object>> getUserData(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Dados do usuário - requer scope 'read'");
@@ -61,8 +63,8 @@ public class ApiController {
         if (authentication.getPrincipal() instanceof Jwt jwt) {
             response.put("token_info", Map.of(
                 "subject", jwt.getClaimAsString("sub"),
-                "issued_at", jwt.getIssuedAt(),
-                "expires_at", jwt.getExpiresAt()
+                "issued_at", Objects.requireNonNull(jwt.getIssuedAt()),
+                "expires_at", Objects.requireNonNull(jwt.getExpiresAt())
             ));
         }
         
@@ -70,7 +72,7 @@ public class ApiController {
     }
 
     @GetMapping("/admin/users")
-    @PreAuthorize("hasAuthority('SCOPE_write')")
+    @PreAuthorize("hasAuthority('write')")
     public ResponseEntity<Map<String, Object>> getAdminUsers(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Lista de usuários - requer scope 'write' (admin)");
@@ -94,7 +96,7 @@ public class ApiController {
     }
 
     @GetMapping("/admin/system")
-    @PreAuthorize("hasAuthority('SCOPE_write')")
+    @PreAuthorize("hasAuthority('write')")
     public ResponseEntity<Map<String, Object>> getSystemInfo(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Informações do sistema - requer scope 'write' (admin)");

@@ -7,7 +7,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="oauth2-security-example" />
-        <module name="example-security" />
       </profile>
     </annotationProcessing>
   </component>

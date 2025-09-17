@@ -23,8 +23,8 @@ public class ResourceServerConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/user/**").hasAnyAuthority("SCOPE_read", "SCOPE_write")
-                        .requestMatchers("/api/admin/**").hasAuthority("SCOPE_write")
+                        .requestMatchers("/api/user/**").hasAnyAuthority("read", "write")
+                        .requestMatchers("/api/admin/**").hasAuthority("write")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -36,9 +36,10 @@ public class ResourceServerConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .csrf(csrf -> csrf.disable());
-
+    
         return http.build();
     }
+
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
